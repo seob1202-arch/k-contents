@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>거긴 어떠니?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Pretendard', sans-serif; background-color: #F8FAFC; -webkit-tap-highlight-color: transparent; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .aspect-thumb { aspect-ratio: 16 / 9; }
+        .tab-active { border-bottom: 2px solid #4F46E5; color: #4F46E5; font-weight: 700; }
+        .tab-inactive { color: #94A3B8; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
+        .animate-heart { animation: heartPop 0.3s ease-in-out; }
+    </style>
+</head>
+<body class="text-slate-800 bg-slate-50">
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbyy6qZxBuK3DVpOqn9LCG9056mSSrWhaCv6iAIyZWw7i9lnodjDDYxxEt4kKvmEBwageg/exec"; 
+    </script>
+    <nav class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200">
+        <div class="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="location.reload()">
+                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shadow-md">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </div>
+                <h1 class="font-extrabold text-lg tracking-tight text-slate-800">거긴 어떠니?</h1>
+            </div>
+            <div class="flex gap-4 text-slate-400">
+                <button onclick="shareApp()" class="hover:text-indigo-600 transition"><i class="fa-solid fa-share-nodes text-lg"></i></button>
+                <button onclick="openInstallGuide()" class="hover:text-indigo-600 transition"><i class="fa-solid fa-download text-lg"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-md mx-auto px-4 py-6 pb-24">
+        
+        <div class="bg-slate-900 rounded-3xl p-6 text-white mb-6 shadow-xl relative overflow-hidden group">
+            <div class="relative z-10">
+                <span class="bg-indigo-500 text-[10px] font-bold px-2 py-0.5 rounded-full mb-3 inline-block">Global Life Log</span>
+                <h2 class="text-2xl font-black mb-3 leading-tight">"지금, <span class="text-indigo-400">거긴 어떠니?</span>" ✈️</h2>
+                <p class="text-slate-300 text-xs font-medium opacity-90 leading-relaxed">
+                    여러분의 생생한 경험과 정보를 공유해주세요.<br>
+                    <span class="text-indigo-200 font-bold">사소한 일상도 누군가에겐 소중한 꿀팁이 됩니다.</span>
+                </p>
+            </div>
+            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500 rounded-full blur-[50px] opacity-20"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 bg-purple-500 rounded-full blur-[40px] opacity-20"></div>
+            <i class="fa-regular fa-paper-plane absolute bottom-4 right-4 text-5xl text-white/5 rotate-12"></i>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 mb-6">
+            <button onclick="filterData('all')" class="bg-white border border-slate-200 py-2.5 rounded-xl text-xs font-bold text-slate-600 shadow-sm hover:border-indigo-500 hover:text-indigo-600 active:scale-95 transition">👀 전체보기</button>
+            <button onclick="filterData('💥 컬처쇼크')" class="bg-white border border-slate-200 py-2.5 rounded-xl text-xs font-bold text-slate-600 shadow-sm hover:border-red-500 hover:text-red-500 active:scale-95 transition">💥 컬처쇼크</button>
+            <button onclick="filterData('🍯 현지꿀팁')" class="bg-white border border-slate-200 py-2.5 rounded-xl text-xs font-bold text-slate-600 shadow-sm hover:border-amber-500 hover:text-amber-500 active:scale-95 transition">🍯 현지꿀팁</button>
+            <button onclick="filterData('😭 생존신고')" class="bg-white border border-slate-200 py-2.5 rounded-xl text-xs font-bold text-slate-600 shadow-sm hover:border-blue-500 hover:text-blue-500 active:scale-95 transition">😭 생존신고</button>
+            <button onclick="filterData('🛍️ 쇼핑하울')" class="bg-white border border-slate-200 py-2.5 rounded-xl text-xs font-bold text-slate-600 shadow-sm hover:border-purple-500 hover:text-purple-500 active:scale-95 transition">🛍️ 쇼핑하울</button>
+            <button onclick="filterData('🔥 현지이슈')" class="bg-white border border-slate-200 py-2.5 rounded-xl text-xs font-bold text-slate-600 shadow-sm hover:border-emerald-500 hover:text-emerald-500 active:scale-95 transition">🔥 현지이슈</button>
+        </div>
+
+        <div class="flex justify-end mb-2 px-1">
+             <span class="text-[10px] text-slate-400 font-medium"><i class="fa-solid fa-fire text-red-400"></i> 공감 많은 순으로 정렬됩니다</span>
+        </div>
+
+        <div id="loading" class="flex flex-col items-center justify-center py-20 text-slate-400">
+            <div class="w-10 h-10 border-4 border-slate-200 border-t-indigo-500 rounded-full animate-spin mb-3"></div>
+            <span class="text-xs font-bold">전 세계 소식 배달 중...</span>
+        </div>
+
+        <div id="card-grid" class="flex flex-col gap-6"></div>
+    </main>
+
+    <div class="fixed bottom-6 right-6 z-30">
+        <button onclick="openModal('write-modal')" class="group flex items-center gap-2 bg-slate-900 text-white pl-4 pr-2 py-3 rounded-full shadow-lg shadow-slate-900/30 hover:scale-105 transition-all">
+            <span class="font-bold text-sm">소식 전하기</span>
+            <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white">
+                <i class="fa-solid fa-pen"></i>
+            </div>
+        </button>
+    </div>
+
+    <div id="write-modal" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" onclick="closeModal('write-modal')"></div>
+        <div class="absolute bottom-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto bg-white w-full max-w-lg md:rounded-3xl rounded-t-3xl shadow-2xl overflow-hidden max-h-[95vh] flex flex-col">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
+                <div><h3 class="text-lg font-black text-slate-800">거긴 어때요?</h3><p class="text-[11px] text-slate-500">생생한 현지 소식이나 에피소드를 들려주세요.</p></div>
+                <button onclick="closeModal('write-modal')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <form id="postForm" onsubmit="submitForm(event)" class="space-y-5">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <label class="block text-xs font-bold text-slate-500 mb-2">🌏 어디서 일어난 일인가요?</label>
+                        <div class="flex flex-col gap-2">
+                            <select id="inCountrySelect" onchange="toggleCountryInput()" class="w-full p-3 bg-white rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-bold text-slate-700 transition-all appearance-none cursor-pointer">
+                                <option value="" disabled selected>국가 선택 (주요 국가)</option>
+                                <option value="🇺🇸 미국">🇺🇸 미국</option>
+                                <option value="🇯🇵 일본">🇯🇵 일본</option>
+                                <option value="🇻🇳 베트남">🇻🇳 베트남</option>
+                                <option value="🇨🇦 캐나다">🇨🇦 캐나다</option>
+                                <option value="🇦🇺 호주">🇦🇺 호주</option>
+                                <option value="🇹🇭 태국">🇹🇭 태국</option>
+                                <option value="🇵🇭 필리핀">🇵🇭 필리핀</option>
+                                <option value="🇬🇧 영국">🇬🇧 영국</option>
+                                <option value="🇩🇪 독일">🇩🇪 독일</option>
+                                <option value="🇫🇷 프랑스">🇫🇷 프랑스</option>
+                                <option value="🇨🇳 중국">🇨🇳 중국</option>
+                                <option value="direct" class="text-indigo-600 font-bold">✏️ 목록에 없어요 (직접 입력)</option>
+                            </select>
+                            <input type="text" id="inCountryDirect" placeholder="국가명을 입력해주세요" class="hidden w-full p-3 bg-white rounded-xl border border-indigo-200 focus:border-indigo-500 outline-none text-sm animate-pulse-soft">
+                            <input type="text" id="inCity" placeholder="도시명 (예: 뉴욕, 다낭)" class="w-full p-3 bg-white rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-2 ml-1">주제 & 내용</label>
+                        <select id="inCategory" class="w-full p-3 mb-3 bg-white rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-bold text-slate-600" required>
+                            <option value="" disabled selected>카테고리 선택</option>
+                            <option value="💥 컬처쇼크">💥 컬처쇼크 (충격 실화)</option>
+                            <option value="🍯 현지꿀팁">🍯 현지꿀팁 (맛집/팁)</option>
+                            <option value="😭 생존신고">😭 생존신고 (실패/고생담)</option>
+                            <option value="🛍️ 쇼핑하울">🛍️ 쇼핑하울 (이건 사야해)</option>
+                            <option value="🔥 현지이슈">🔥 현지이슈 (실시간 상황)</option>
+                        </select>
+                        <input type="text" id="inTitle" placeholder="제목 (클릭을 부르는 한 문장)" class="w-full p-3 mb-2 bg-white rounded-xl border border-slate-200 focus:border-indigo-500 outline-none font-bold text-slate-800" required>
+                        <textarea id="inContent" placeholder="에피소드 내용이나 큐레이션 코멘트를 적어주세요." class="w-full p-3 bg-white rounded-xl border border-slate-200 focus:border-indigo-500 outline-none h-28 resize-none text-sm leading-relaxed" required></textarea>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1 ml-1">썸네일/사진 (선택)</label>
+                            <div class="relative w-full h-24 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-all group overflow-hidden">
+                                <input type="file" id="inImage" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this)">
+                                <div id="upload-placeholder" class="text-center pointer-events-none">
+                                    <i class="fa-solid fa-camera text-slate-400 group-hover:text-indigo-500 mb-1"></i>
+                                    <p class="text-[10px] text-slate-400">사진 등록 (SNS 캡쳐 등)</p>
+                                </div>
+                                <img id="img-preview" class="absolute inset-0 w-full h-full object-cover hidden">
+                                <button type="button" id="btn-remove-img" onclick="removeImage(event)" class="absolute top-1 right-1 z-20 bg-black/60 text-white rounded-full w-5 h-5 text-[10px] flex items-center justify-center hidden"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
+                            <label class="block text-xs font-bold text-indigo-800 mb-1">🔗 원본 SNS 링크 (홍보 효과 UP!)</label>
+                            <input type="url" id="inLink" placeholder="인스타, 유튜브, 블로그 등 원본 주소" class="w-full p-3 bg-white rounded-xl border border-indigo-200 focus:border-indigo-500 outline-none text-xs text-blue-600">
+                            <p class="text-[10px] text-indigo-400 mt-1.5 leading-snug">* 원작자/제보자 모두에게 도움이 됩니다!</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 pt-2">
+                        <input type="text" id="inNick" placeholder="닉네임" class="w-1/2 p-3 bg-slate-50 rounded-xl border border-slate-200 outline-none text-sm" required>
+                        <input type="password" id="inPw" placeholder="비번(수정/삭제용)" class="w-1/2 p-3 bg-slate-50 rounded-xl border border-slate-200 outline-none text-sm" required>
+                    </div>
+                    <button type="submit" id="btnSubmit" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-black active:scale-95 transition-all flex items-center justify-center gap-2"><span>업로드 하기</span></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="comment-modal" class="fixed inset-0 z-[70] hidden">
+        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" onclick="closeModal('comment-modal')"></div>
+        <div class="absolute bottom-0 bg-white w-full max-w-md md:left-1/2 md:-translate-x-1/2 rounded-t-3xl shadow-2xl flex flex-col max-h-[80vh]">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-800">💬 댓글 <span id="modal-comment-count" class="text-indigo-600">0</span></h3>
+                <button onclick="closeModal('comment-modal')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="comment-list" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 min-h-[300px]"></div>
+            <div class="p-4 bg-white border-t border-slate-200">
+                <form onsubmit="submitComment(event)" class="flex gap-2">
+                    <input type="text" id="comment-nick" placeholder="닉네임" class="w-1/4 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs font-bold focus:border-indigo-500 outline-none" required>
+                    <input type="text" id="comment-text" placeholder="간단한 코멘트를 남겨보세요..." class="flex-1 p-3 bg-slate-50 rounded-xl border border-slate-200 text-sm focus:border-indigo-500 outline-none" required>
+                    <button type="submit" id="btn-comment-submit" class="bg-indigo-600 text-white w-12 h-11 rounded-xl flex items-center justify-center shadow-md active:scale-95 transition"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="install-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center px-4">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeModal('install-modal')"></div>
+        <div class="relative bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+            <div class="flex border-b border-slate-100">
+                <button id="tab-btn-ios" onclick="switchTab('ios')" class="flex-1 py-4 text-sm text-center tab-active transition-colors"><i class="fa-brands fa-apple mr-1"></i> 아이폰</button>
+                <button id="tab-btn-android" onclick="switchTab('android')" class="flex-1 py-4 text-sm text-center tab-inactive transition-colors"><i class="fa-brands fa-android mr-1"></i> 안드로이드</button>
+            </div>
+            <div id="tab-content-ios" class="p-6 text-center">
+                <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-800 text-3xl"><i class="fa-brands fa-safari"></i></div>
+                <h3 class="text-lg font-bold text-slate-800 mb-4">Safari에서 홈 화면 추가</h3>
+                <p class="text-xs text-slate-500">공유 버튼 <i class="fa-solid fa-arrow-up-from-bracket"></i> > 홈 화면에 추가</p>
+            </div>
+            <div id="tab-content-android" class="p-6 text-center hidden">
+                <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-green-600 text-3xl"><i class="fa-brands fa-chrome"></i></div>
+                <h3 class="text-lg font-bold text-slate-800 mb-4">Chrome에서 앱 설치</h3>
+                <p class="text-xs text-slate-500">메뉴 버튼 <i class="fa-solid fa-ellipsis-vertical"></i> > 앱 설치 / 홈 화면에 추가</p>
+            </div>
+            <div class="p-4 border-t border-slate-100">
+                <button onclick="closeModal('install-modal')" class="w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-black transition">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allData = [];
+        let currentPostId = null;
+        let selectedFileBase64 = null;
+        let selectedFileName = null;
+        let selectedFileMime = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if(API_URL.includes("여기에")) { 
+                showToast("API URL을 설정해주세요!", false);
+                return; 
+            }
+            loadData();
+        });
+
+        async function loadData() {
+            try {
+                const res = await fetch(API_URL);
+                if(!res.ok) throw new Error("Network response was not ok");
+                const json = await res.json();
+                if(json.status === 'success') {
+                    allData = json.data;
+                    allData.sort((a, b) => {
+                        const countA = Number(a.LikeCount || 0);
+                        const countB = Number(b.LikeCount || 0);
+                        if(countB !== countA) return countB - countA;
+                        return new Date(b.Timestamp) - new Date(a.Timestamp);
+                    });
+                    renderData(allData);
+                }
+                document.getElementById('loading').style.display = 'none';
+            } catch(e) { 
+                console.error(e); 
+                showToast("데이터를 불러오지 못했습니다. URL과 권한을 확인해주세요.", false);
+                document.getElementById('loading').innerHTML = `<span class="text-red-400 text-xs">서버 연결 실패</span>`;
+            }
+        }
+
+        function renderData(data) {
+            const grid = document.getElementById('card-grid');
+            grid.innerHTML = '';
+            if(data.length === 0) {
+                grid.innerHTML = '<div class="text-center py-10 bg-white rounded-2xl border border-slate-100"><p class="text-slate-400 text-sm">등록된 글이 없습니다.</p></div>';
+                return;
+            }
+
+            const votedList = JSON.parse(localStorage.getItem('voted_posts') || '[]');
+
+            data.forEach((item, index) => {
+                let snsAction = '';
+                if(item.SNSLink) {
+                    let icon = '<i class="fa-solid fa-link"></i>'; let text = '원본'; let colorClass = 'bg-slate-100 text-slate-600';
+                    if(item.SNSLink.includes('instagram')) { icon = '<i class="fa-brands fa-instagram"></i>'; text = '인스타'; colorClass = 'bg-pink-50 text-pink-600 border-pink-100'; }
+                    else if(item.SNSLink.includes('youtu')) { icon = '<i class="fa-brands fa-youtube"></i>'; text = '영상'; colorClass = 'bg-red-50 text-red-600 border-red-100'; }
+                    else if(item.SNSLink.includes('blog')) { icon = '<i class="fa-solid fa-n"></i>'; text = '블로그'; colorClass = 'bg-green-50 text-green-600 border-green-100'; }
+                    snsAction = `<a href="${item.SNSLink}" target="_blank" class="flex-1 flex items-center justify-center gap-1 py-2.5 rounded-xl text-xs font-bold border ${colorClass}">${icon} ${text}</a>`;
+                }
+
+                let imageHTML = '';
+                if(item.ImageURL && item.ImageURL.startsWith('http')) {
+                    imageHTML = `<div class="aspect-thumb w-full bg-slate-100 relative overflow-hidden group-hover:opacity-90 transition-opacity"><img src="${item.ImageURL}" class="w-full h-full object-cover" loading="lazy"></div>`;
+                }
+
+                const isVoted = votedList.includes(String(item.ID));
+                const heartClass = isVoted ? "fa-solid text-red-500 animate-heart" : "fa-regular text-slate-400";
+                
+                let commentCount = 0;
+                try { const comments = JSON.parse(item.Comments || "[]"); commentCount = comments.length; } catch(e){}
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all fade-in";
+                card.style.animationDelay = `${index * 0.05}s`;
+                
+                card.innerHTML = `
+                    ${imageHTML}
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">${item.Category}</span>
+                            <span class="text-[10px] text-slate-400 font-medium"><i class="fa-solid fa-location-dot"></i> ${item.Country}</span>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-900 mb-2 leading-snug break-keep">${item.Title}</h3>
+                        <p class="text-sm text-slate-600 mb-5 line-clamp-3 leading-relaxed break-all">${item.Content}</p>
+                        
+                        <div class="flex gap-2 pt-4 border-t border-slate-50">
+                            <button onclick="voteItem(this, '${item.ID}')" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold border border-slate-200 bg-white hover:bg-slate-50 transition-colors">
+                                <i class="${heartClass} text-sm"></i>
+                                <span class="like-count ml-0.5">${item.LikeCount||0}</span>
+                                <span class="text-xs">공감</span>
+                            </button>
+                            <button onclick="openCommentModal('${item.ID}')" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold border border-slate-200 bg-white hover:bg-slate-50 transition-colors">
+                                <i class="fa-regular fa-comment-dots text-slate-400 text-sm"></i> 
+                                <span>${commentCount}</span>
+                            </button>
+                            ${snsAction}
+                        </div>
+                        <div class="mt-3 flex justify-end"><span class="text-[10px] text-slate-300">Editor. ${item.Nickname}</span></div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        async function voteItem(btn, id) {
+            let votedList = JSON.parse(localStorage.getItem('voted_posts') || '[]');
+            if(votedList.includes(String(id))) { 
+                showToast("이미 공감을 누르셨습니다! ❤️", false); 
+                return; 
+            }
+            
+            const icon = btn.querySelector('i');
+            const countSpan = btn.querySelector('.like-count');
+            icon.classList.remove('fa-regular', 'text-slate-400');
+            icon.classList.add('fa-solid', 'text-red-500', 'animate-heart');
+            countSpan.innerText = Number(countSpan.innerText) + 1;
+            
+            votedList.push(String(id));
+            localStorage.setItem('voted_posts', JSON.stringify(votedList));
+            try { await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'vote', id: id }) }); } catch(e){}
+        }
+
+        function openCommentModal(id) {
+            currentPostId = id;
+            const item = allData.find(d => String(d.ID) === String(id));
+            if(!item) return;
+            let comments = [];
+            try { comments = JSON.parse(item.Comments || "[]"); } catch(e){}
+            document.getElementById('modal-comment-count').innerText = comments.length;
+            const list = document.getElementById('comment-list');
+            list.innerHTML = '';
+            if(comments.length === 0) {
+                list.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-slate-400 text-xs"><i class="fa-regular fa-comments text-2xl mb-2 opacity-50"></i><p>첫 번째 댓글을 남겨주세요!</p></div>';
+            } else {
+                comments.forEach(c => {
+                    const div = document.createElement('div');
+                    div.className = "bg-white p-3 rounded-xl shadow-sm border border-slate-100";
+                    div.innerHTML = `<div class="flex justify-between mb-1"><span class="font-bold text-xs text-indigo-600">${c.nick}</span><span class="text-[10px] text-slate-300">${new Date(c.date).toLocaleDateString()}</span></div><p class="text-xs text-slate-600 break-all">${c.text}</p>`;
+                    list.appendChild(div);
+                });
+            }
+            setTimeout(() => list.scrollTop = list.scrollHeight, 100);
+            document.getElementById('comment-modal').classList.remove('hidden');
+        }
+
+        async function submitComment(e) {
+            e.preventDefault();
+            if(!currentPostId) return;
+            const nick = document.getElementById('comment-nick').value;
+            const text = document.getElementById('comment-text').value;
+            const btn = document.getElementById('btn-comment-submit');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+            const payload = { action: 'comment', id: currentPostId, nickname: nick, content: text };
+
+            try {
+                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const json = await res.json();
+                if(json.success) {
+                    const item = allData.find(d => String(d.ID) === String(currentPostId));
+                    item.Comments = JSON.stringify(json.comments);
+                    document.getElementById('comment-text').value = '';
+                    openCommentModal(currentPostId);
+                    renderData(allData);
+                    showToast("댓글이 등록되었습니다.");
+                } else {
+                    showToast("댓글 등록 실패", false);
+                }
+            } catch(err) { showToast("오류 발생", false); } 
+            finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>'; }
+        }
+
+        function toggleCountryInput() {
+            const select = document.getElementById('inCountrySelect');
+            const direct = document.getElementById('inCountryDirect');
+            if (select.value === 'direct') { direct.classList.remove('hidden'); direct.focus(); } 
+            else { direct.classList.add('hidden'); }
+        }
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('img-preview').src = e.target.result;
+                    document.getElementById('img-preview').classList.remove('hidden');
+                    document.getElementById('upload-placeholder').classList.add('hidden');
+                    document.getElementById('btn-remove-img').classList.remove('hidden');
+                    selectedFileBase64 = e.target.result.split(',')[1];
+                    selectedFileName = file.name;
+                    selectedFileMime = file.type;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        function removeImage(e) {
+            if(e) e.stopPropagation();
+            document.getElementById('inImage').value = '';
+            document.getElementById('img-preview').classList.add('hidden');
+            document.getElementById('upload-placeholder').classList.remove('hidden');
+            document.getElementById('btn-remove-img').classList.add('hidden');
+            selectedFileBase64 = null;
+        }
+
+        async function submitForm(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            const originalHTML = btn.innerHTML;
+            let country = document.getElementById('inCountrySelect').value;
+            if(country === 'direct') country = document.getElementById('inCountryDirect').value;
+            
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 저장 중...';
+            
+            const payload = {
+                action: 'save',
+                country: country,
+                city: document.getElementById('inCity').value,
+                category: document.getElementById('inCategory').value,
+                title: document.getElementById('inTitle').value,
+                content: document.getElementById('inContent').value,
+                snsLink: document.getElementById('inLink').value,
+                nickname: document.getElementById('inNick').value,
+                password: btoa(document.getElementById('inPw').value),
+                image: selectedFileBase64, imageName: selectedFileName, mimeType: selectedFileMime
+            };
+
+            try {
+                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const json = await res.json();
+                if(json.success) { 
+                    showToast("업로드 완료! 소중한 공유 감사합니다 🎉"); 
+                    setTimeout(() => location.reload(), 1500); 
+                } else {
+                    showToast("실패: " + json.message, false);
+                }
+            } catch(e) { 
+                showToast("오류: " + e, false); 
+            } finally { 
+                btn.disabled = false; btn.innerHTML = originalHTML; 
+            }
+        }
+
+        // 수정된 필터 함수: includes 사용하여 정확히 일치하는 문자열을 찾음
+        function filterData(cat) {
+            if(cat === 'all') renderData(allData);
+            else {
+                const filtered = allData.filter(d => d.Category.includes(cat));
+                renderData(filtered);
+            }
+        }
+
+        function shareApp() {
+            if (navigator.share) navigator.share({ title: '거긴 어떠니?', url: window.location.href });
+            else { navigator.clipboard.writeText(window.location.href); showToast("주소가 복사되었습니다!"); }
+        }
+        function openInstallGuide() {
+            const isAndroid = navigator.userAgent.toLowerCase().indexOf("android") > -1;
+            switchTab(isAndroid ? 'android' : 'ios');
+            openModal('install-modal');
+        }
+        function switchTab(os) {
+            const ios = document.getElementById('tab-content-ios');
+            const and = document.getElementById('tab-content-android');
+            const btnIos = document.getElementById('tab-btn-ios');
+            const btnAnd = document.getElementById('tab-btn-android');
+            if(os === 'ios') {
+                ios.classList.remove('hidden'); and.classList.add('hidden');
+                btnIos.className = 'flex-1 py-4 text-sm text-center tab-active';
+                btnAnd.className = 'flex-1 py-4 text-sm text-center tab-inactive';
+            } else {
+                ios.classList.add('hidden'); and.classList.remove('hidden');
+                btnIos.className = 'flex-1 py-4 text-sm text-center tab-inactive';
+                btnAnd.className = 'flex-1 py-4 text-sm text-center tab-active';
+            }
+        }
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function showToast(message, isSuccess = true) {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-6 left-1/2 -translate-x-1/2 z-[80] flex items-center gap-3 px-6 py-3.5 rounded-full shadow-2xl transition-all duration-300 transform translate-y-[-100%] opacity-0 ${isSuccess ? 'bg-slate-900 text-white' : 'bg-red-500 text-white'}`;
+            const icon = isSuccess ? '<i class="fa-solid fa-circle-check text-emerald-400"></i>' : '<i class="fa-solid fa-circle-exclamation text-white"></i>';
+            toast.innerHTML = `${icon} <span class="font-bold text-sm tracking-wide">${message}</span>`;
+            document.body.appendChild(toast);
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-[-100%]', 'opacity-0');
+                toast.classList.add('translate-y-4', 'opacity-100');
+            });
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-100');
+                toast.classList.add('translate-y-[-100%]', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
