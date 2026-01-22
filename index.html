@@ -226,6 +226,15 @@
         </div>
     </div>
 
+    <div id="loading-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div class="relative bg-white rounded-3xl p-8 flex flex-col items-center shadow-2xl animate-in zoom-in duration-300">
+            <div class="w-12 h-12 border-4 border-indigo-100 border-t-indigo-500 rounded-full animate-spin mb-4"></div>
+            <h3 class="text-lg font-bold text-slate-800 mb-1">업로드 중...</h3>
+            <p class="text-xs text-slate-500">잠시만 기다려주세요!</p>
+        </div>
+    </div>
+
     <script>
         let allData = [];
         let currentPostId = null;
@@ -486,7 +495,10 @@
             let country = document.getElementById('inCountrySelect').value;
             if(country === 'direct') country = document.getElementById('inCountryDirect').value;
             
-            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 저장 중...';
+            btn.disabled = true; 
+            
+            // 로딩 모달 열기
+            openModal('loading-modal');
             
             const payload = {
                 action: 'save',
@@ -504,6 +516,10 @@
             try {
                 const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
                 const json = await res.json();
+                
+                // 로딩 모달 닫기
+                closeModal('loading-modal');
+
                 if(json.success) { 
                     showToast("업로드 완료! 소중한 공유 감사합니다 🎉"); 
                     setTimeout(() => location.reload(), 1500); 
@@ -511,9 +527,10 @@
                     showToast("실패: " + json.message, false);
                 }
             } catch(e) { 
+                closeModal('loading-modal');
                 showToast("오류: " + e, false); 
             } finally { 
-                btn.disabled = false; btn.innerHTML = originalHTML; 
+                btn.disabled = false; 
             }
         }
 
