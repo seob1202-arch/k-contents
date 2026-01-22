@@ -291,7 +291,6 @@
             const grid = document.getElementById('card-grid');
             grid.innerHTML = '';
             if(data.length === 0) {
-                // [수정] Grid Col span 처리 (PC에서 전체 너비 차지)
                 grid.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-20 bg-white rounded-2xl border border-slate-100"><p class="text-slate-400 text-sm">등록된 글이 없습니다.</p></div>';
                 return;
             }
@@ -328,7 +327,6 @@
                 try { const comments = JSON.parse(item.Comments || "[]"); commentCount = comments.length; } catch(e){}
 
                 const card = document.createElement('div');
-                // [수정] 카드 스타일 PC 호버 효과 강화
                 card.className = "group bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 fade-in flex flex-col";
                 card.style.animationDelay = `${index * 0.05}s`;
                 
@@ -361,17 +359,25 @@
             });
         }
 
-        // iOS 자동재생 및 Shorts 화면비율 자동전환
+        // [최종 수정] 릴스, 틱톡, 스레드, 쇼츠 호환성 및 자동 비율 조정 openPlayer
         function openPlayer(url) {
             const modal = document.getElementById('player-modal');
             const iframe = document.getElementById('player-iframe');
             const container = document.getElementById('player-container'); 
             const extLink = document.getElementById('player-external-link');
             
+            // 1. 외부 링크 버튼 설정
             extLink.href = url;
+            
             let embedUrl = url;
-            let isShorts = false; 
+            let isVertical = false; // 세로 모드 여부
 
+            // URL에서 불필요한 쿼리 파라미터 제거 (? 앞부분만 사용)
+            const cleanUrl = url.split('?')[0].replace(/\/$/, ""); // 끝에 슬래시도 제거
+
+            // --- 플랫폼별 URL 변환 로직 ---
+
+            // [1] YouTube (Shorts & Regular)
             if (url.includes('youtube.com') || url.includes('youtu.be')) {
                 let videoId = '';
                 if (url.includes('v=')) {
@@ -380,26 +386,51 @@
                     videoId = url.split('youtu.be/')[1].split('?')[0];
                 } else if (url.includes('/shorts/')) {
                     videoId = url.split('/shorts/')[1].split('?')[0];
-                    isShorts = true; 
+                    isVertical = true; // 숏츠는 세로
                 }
                 
                 if (videoId) {
                     embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&mute=1&rel=0&modestbranding=1`;
                 }
-            } else if (url.includes('instagram.com') && !url.includes('/embed')) {
-                embedUrl = url.endsWith('/') ? `${url}embed` : `${url}/embed`;
+            } 
+            // [2] Instagram (Reels & Posts)
+            else if (url.includes('instagram.com')) {
+                // 릴스는 세로 모드
+                if(url.includes('/reel/')) isVertical = true;
+                // 인스타는 끝에 /embed를 붙여야 iframe 허용됨
+                embedUrl = `${cleanUrl}/embed`;
+            }
+            // [3] TikTok
+            else if (url.includes('tiktok.com')) {
+                isVertical = true; // 틱톡은 무조건 세로
+                // 틱톡 비디오 ID 추출 (숫자로 된 부분)
+                const match = url.match(/video\/(\d+)/);
+                if (match && match[1]) {
+                    // 틱톡 임베드 전용 URL
+                    embedUrl = `https://www.tiktok.com/embed/v2/${match[1]}`;
+                }
+            }
+            // [4] Threads
+            else if (url.includes('threads.net')) {
+                // 스레드는 게시물 형태에 따라 다르지만 모바일에서는 세로 비율이 안전함
+                // 스레드 임베드 URL 규칙
+                embedUrl = `${cleanUrl}/embed`;
             }
             
-            if (isShorts) {
-                container.classList.remove('aspect-video');
-                container.classList.add('aspect-[9/16]');
-                container.style.maxHeight = '75vh'; 
+            // --- 화면 비율(Aspect Ratio) 자동 전환 ---
+            if (isVertical) {
+                // 세로형 (9:16)
+                container.classList.remove('aspect-video'); // 16:9 제거
+                container.classList.add('aspect-[9/16]');   // 9:16 추가
+                container.style.maxHeight = '75vh'; // 화면 꽉 차지 않게 높이 제한
             } else {
+                // 가로형 (16:9) - 기본값
                 container.classList.add('aspect-video');
                 container.classList.remove('aspect-[9/16]');
                 container.style.maxHeight = ''; 
             }
 
+            // iframe 주소 주입 및 모달 표시
             iframe.src = embedUrl;
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden'; 
