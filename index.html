@@ -13,50 +13,64 @@
         .aspect-thumb { aspect-ratio: 16 / 9; }
         .tab-active { border-bottom: 2px solid #4F46E5; color: #4F46E5; font-weight: 700; }
         .tab-inactive { color: #94A3B8; }
+        
+        /* 모달 애니메이션 */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
         .animate-heart { animation: heartPop 0.3s ease-in-out; }
+
+        /* PC용 스크롤바 커스텀 */
+        @media (min-width: 768px) {
+            ::-webkit-scrollbar { width: 8px; }
+            ::-webkit-scrollbar-track { background: #f1f5f9; }
+            ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+            ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        }
     </style>
 </head>
-<body class="text-slate-800 bg-slate-50">
+<body class="text-slate-800 bg-slate-50 overflow-y-scroll">
 
     <script>
         // 여기에 본인의 웹 앱 URL을 넣어주세요
         const API_URL = "https://script.google.com/macros/s/AKfycbyy6qZxBuK3DVpOqn9LCG9056mSSrWhaCv6iAIyZWw7i9lnodjDDYxxEt4kKvmEBwageg/exec"; 
     </script>
-    <nav class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200">
-        <div class="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
+
+    <nav class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 transition-all duration-300">
+        <div class="max-w-md md:max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
             <div class="flex items-center gap-2 cursor-pointer" onclick="location.reload()">
-                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shadow-md">
+                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shadow-md hover:scale-105 transition-transform">
                     <i class="fa-solid fa-paper-plane"></i>
                 </div>
                 <h1 class="font-extrabold text-lg tracking-tight text-slate-800">거긴 어떠니?</h1>
             </div>
-            <div class="flex gap-4 text-slate-400">
+            <div class="flex items-center gap-4 text-slate-400">
+                <button onclick="openModal('write-modal')" class="hidden md:flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-black transition text-sm font-bold shadow-sm hover:shadow-md mr-2">
+                    <i class="fa-solid fa-pen"></i> 소식 전하기
+                </button>
                 <button onclick="shareApp()" class="hover:text-indigo-600 transition"><i class="fa-solid fa-share-nodes text-lg"></i></button>
                 <button onclick="openInstallGuide()" class="hover:text-indigo-600 transition"><i class="fa-solid fa-download text-lg"></i></button>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-md mx-auto px-4 py-6 pb-24">
+    <main class="max-w-md md:max-w-7xl mx-auto px-4 py-6 pb-24 md:pb-12">
         
-        <div class="bg-slate-900 rounded-3xl p-6 text-white mb-6 shadow-xl relative overflow-hidden group">
-            <div class="relative z-10">
-                <span class="bg-indigo-500 text-[10px] font-bold px-2 py-0.5 rounded-full mb-3 inline-block">Global Life Log</span>
-                <h2 class="text-2xl font-black mb-3 leading-tight">"지금, <span class="text-indigo-400">거긴 어떠니?</span>" ✈️</h2>
-                <p class="text-slate-300 text-xs font-medium opacity-90 leading-relaxed">
-                    여러분의 생생한 경험과 정보를 공유해주세요.<br>
+        <div class="bg-slate-900 rounded-3xl p-6 md:p-10 text-white mb-8 shadow-xl relative overflow-hidden group transition-all hover:shadow-2xl">
+            <div class="relative z-10 md:max-w-2xl">
+                <span class="bg-indigo-500 text-[10px] md:text-xs font-bold px-2 py-0.5 md:px-3 md:py-1 rounded-full mb-3 inline-block shadow-lg shadow-indigo-500/30">Global Life Log</span>
+                <h2 class="text-2xl md:text-4xl font-black mb-3 leading-tight">"지금, <span class="text-indigo-400">거긴 어떠니?</span>" ✈️</h2>
+                <p class="text-slate-300 text-xs md:text-base font-medium opacity-90 leading-relaxed">
+                    여러분의 생생한 경험과 정보를 공유해주세요.<br class="md:hidden">
                     <span class="text-indigo-200 font-bold">사소한 일상도 누군가에겐 소중한 꿀팁이 됩니다.</span>
                 </p>
             </div>
-            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500 rounded-full blur-[50px] opacity-20"></div>
-            <div class="absolute bottom-0 left-0 w-24 h-24 bg-purple-500 rounded-full blur-[40px] opacity-20"></div>
-            <i class="fa-regular fa-paper-plane absolute bottom-4 right-4 text-5xl text-white/5 rotate-12"></i>
+            <div class="absolute top-0 right-0 w-32 h-32 md:w-64 md:h-64 bg-indigo-500 rounded-full blur-[50px] md:blur-[100px] opacity-20"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 md:w-48 md:h-48 bg-purple-500 rounded-full blur-[40px] md:blur-[80px] opacity-20"></div>
+            <i class="fa-regular fa-paper-plane absolute bottom-4 right-4 md:bottom-8 md:right-10 text-5xl md:text-8xl text-white/5 rotate-12 transition-transform group-hover:rotate-6 group-hover:scale-110 duration-500"></i>
         </div>
 
-        <div class="grid grid-cols-3 gap-2 mb-6">
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-2 mb-6">
             <button onclick="filterData('all')" class="bg-white border border-slate-200 py-2.5 rounded-xl text-xs font-bold text-slate-600 shadow-sm hover:border-indigo-500 hover:text-indigo-600 active:scale-95 transition">👀 전체보기</button>
             <button onclick="filterData('💥 컬처쇼크')" class="bg-white border border-slate-200 py-2.5 rounded-xl text-xs font-bold text-slate-600 shadow-sm hover:border-red-500 hover:text-red-500 active:scale-95 transition">💥 컬처쇼크</button>
             <button onclick="filterData('🍯 현지꿀팁')" class="bg-white border border-slate-200 py-2.5 rounded-xl text-xs font-bold text-slate-600 shadow-sm hover:border-amber-500 hover:text-amber-500 active:scale-95 transition">🍯 현지꿀팁</button>
@@ -74,10 +88,10 @@
             <span class="text-xs font-bold">전 세계 소식 배달 중...</span>
         </div>
 
-        <div id="card-grid" class="flex flex-col gap-6"></div>
+        <div id="card-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </main>
 
-    <div class="fixed bottom-6 right-6 z-30">
+    <div class="fixed bottom-6 right-6 z-30 md:hidden">
         <button onclick="openModal('write-modal')" class="group flex items-center gap-2 bg-slate-900 text-white pl-4 pr-2 py-3 rounded-full shadow-lg shadow-slate-900/30 hover:scale-105 transition-all">
             <span class="font-bold text-sm">소식 전하기</span>
             <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white">
@@ -88,7 +102,7 @@
 
     <div id="write-modal" class="fixed inset-0 z-[60] hidden">
         <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" onclick="closeModal('write-modal')"></div>
-        <div class="absolute bottom-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto bg-white w-full max-w-lg md:rounded-3xl rounded-t-3xl shadow-2xl overflow-hidden max-h-[95vh] flex flex-col">
+        <div class="absolute bottom-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto bg-white w-full max-w-lg md:max-w-2xl md:rounded-3xl rounded-t-3xl shadow-2xl overflow-hidden max-h-[95vh] md:max-h-[90vh] flex flex-col md:border md:border-slate-100">
             <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
                 <div><h3 class="text-lg font-black text-slate-800">거긴 어때요?</h3><p class="text-[11px] text-slate-500">생생한 현지 소식이나 에피소드를 들려주세요.</p></div>
                 <button onclick="closeModal('write-modal')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200"><i class="fa-solid fa-xmark"></i></button>
@@ -97,7 +111,7 @@
                 <form id="postForm" onsubmit="submitForm(event)" class="space-y-5">
                     <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                         <label class="block text-xs font-bold text-slate-500 mb-2">🌏 어디서 일어난 일인가요?</label>
-                        <div class="flex flex-col gap-2">
+                        <div class="flex flex-col md:flex-row gap-2">
                             <select id="inCountrySelect" onchange="toggleCountryInput()" class="w-full p-3 bg-white rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-bold text-slate-700 transition-all appearance-none cursor-pointer">
                                 <option value="" disabled selected>국가 선택 (주요 국가)</option>
                                 <option value="🇺🇸 미국">🇺🇸 미국</option>
@@ -161,13 +175,13 @@
 
     <div id="comment-modal" class="fixed inset-0 z-[70] hidden">
         <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" onclick="closeModal('comment-modal')"></div>
-        <div class="absolute bottom-0 bg-white w-full max-w-md md:left-1/2 md:-translate-x-1/2 rounded-t-3xl shadow-2xl flex flex-col max-h-[80vh]">
+        <div class="absolute bottom-0 bg-white w-full max-w-md md:left-1/2 md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 md:bottom-auto rounded-t-3xl md:rounded-2xl shadow-2xl flex flex-col max-h-[80vh] md:max-h-[70vh]">
             <div class="p-4 border-b border-slate-100 flex justify-between items-center">
                 <h3 class="font-bold text-slate-800">💬 댓글 <span id="modal-comment-count" class="text-indigo-600">0</span></h3>
-                <button onclick="closeModal('comment-modal')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeModal('comment-modal')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="comment-list" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 min-h-[300px]"></div>
-            <div class="p-4 bg-white border-t border-slate-200">
+            <div class="p-4 bg-white border-t border-slate-200 md:rounded-b-2xl">
                 <form onsubmit="submitComment(event)" class="flex gap-2">
                     <input type="text" id="comment-nick" placeholder="닉네임" class="w-1/4 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs font-bold focus:border-indigo-500 outline-none" required>
                     <input type="text" id="comment-text" placeholder="간단한 코멘트를 남겨보세요..." class="flex-1 min-w-0 p-3 bg-slate-50 rounded-xl border border-slate-200 text-sm focus:border-indigo-500 outline-none" required>
@@ -178,13 +192,13 @@
     </div>
 
     <div id="player-modal" class="fixed inset-0 z-[90] hidden bg-black/95 flex flex-col justify-center items-center p-4">
-        <div class="w-full max-w-lg relative animate-in zoom-in duration-300">
+        <div class="w-full max-w-lg md:max-w-4xl relative animate-in zoom-in duration-300">
             <button onclick="closePlayer()" class="absolute -top-10 right-0 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center text-white text-lg hover:bg-white/20 transition-colors backdrop-blur-md">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             
-            <div class="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl border border-white/10 ring-1 ring-white/5">
-                <iframe id="player-iframe" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; gyroscope; picture-in-picture"></iframe>
+            <div id="player-container" class="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl border border-white/10 ring-1 ring-white/5 transition-all duration-300">
+                <iframe id="player-iframe" class="w-full h-full" frameborder="0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
                 <div id="player-loading" class="absolute inset-0 flex items-center justify-center text-white/30">
                     <i class="fa-solid fa-circle-notch fa-spin text-2xl"></i>
                 </div>
@@ -277,7 +291,8 @@
             const grid = document.getElementById('card-grid');
             grid.innerHTML = '';
             if(data.length === 0) {
-                grid.innerHTML = '<div class="text-center py-10 bg-white rounded-2xl border border-slate-100"><p class="text-slate-400 text-sm">등록된 글이 없습니다.</p></div>';
+                // [수정] Grid Col span 처리 (PC에서 전체 너비 차지)
+                grid.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-20 bg-white rounded-2xl border border-slate-100"><p class="text-slate-400 text-sm">등록된 글이 없습니다.</p></div>';
                 return;
             }
 
@@ -298,13 +313,12 @@
                         icon = '<i class="fa-solid fa-n"></i>'; text = '블로그'; colorClass = 'bg-green-50 text-green-600 border-green-100'; 
                     }
                     
-                    // [수정됨] href 대신 onclick으로 openPlayer 함수 호출
                     snsAction = `<button onclick="openPlayer('${item.SNSLink}')" class="flex-1 flex items-center justify-center gap-1 py-2.5 rounded-xl text-xs font-bold border ${colorClass} hover:brightness-95 transition-all">${icon} ${text} ${playIcon}</button>`;
                 }
 
                 let imageHTML = '';
                 if(item.ImageURL && item.ImageURL.startsWith('http')) {
-                    imageHTML = `<div class="aspect-thumb w-full bg-slate-100 relative overflow-hidden group-hover:opacity-90 transition-opacity"><img src="${item.ImageURL}" class="w-full h-full object-cover" loading="lazy"></div>`;
+                    imageHTML = `<div class="aspect-thumb w-full bg-slate-100 relative overflow-hidden group-hover:opacity-90 transition-opacity"><img src="${item.ImageURL}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy"></div>`;
                 }
 
                 const isVoted = votedList.includes(String(item.ID));
@@ -314,18 +328,19 @@
                 try { const comments = JSON.parse(item.Comments || "[]"); commentCount = comments.length; } catch(e){}
 
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all fade-in";
+                // [수정] 카드 스타일 PC 호버 효과 강화
+                card.className = "group bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 fade-in flex flex-col";
                 card.style.animationDelay = `${index * 0.05}s`;
                 
                 card.innerHTML = `
                     ${imageHTML}
-                    <div class="p-5">
+                    <div class="p-5 flex-1 flex flex-col">
                         <div class="flex justify-between items-start mb-2">
                             <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">${item.Category}</span>
                             <span class="text-[10px] text-slate-400 font-medium"><i class="fa-solid fa-location-dot"></i> ${item.Country}</span>
                         </div>
-                        <h3 class="font-bold text-lg text-slate-900 mb-2 leading-snug break-keep">${item.Title}</h3>
-                        <p class="text-sm text-slate-600 mb-5 line-clamp-3 leading-relaxed break-all">${item.Content}</p>
+                        <h3 class="font-bold text-lg text-slate-900 mb-2 leading-snug break-keep group-hover:text-indigo-600 transition-colors">${item.Title}</h3>
+                        <p class="text-sm text-slate-600 mb-5 line-clamp-3 leading-relaxed break-all flex-1">${item.Content}</p>
                         
                         <div class="flex gap-2 pt-4 border-t border-slate-50">
                             <button onclick="voteItem(this, '${item.ID}')" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold border border-slate-200 bg-white hover:bg-slate-50 transition-colors">
@@ -346,14 +361,17 @@
             });
         }
 
-        // [NEW] 인앱 플레이어 로직
+        // iOS 자동재생 및 Shorts 화면비율 자동전환
         function openPlayer(url) {
             const modal = document.getElementById('player-modal');
             const iframe = document.getElementById('player-iframe');
+            const container = document.getElementById('player-container'); 
             const extLink = document.getElementById('player-external-link');
             
-            // 유튜브 URL 변환 로직 (일반, 단축, Shorts 대응)
+            extLink.href = url;
             let embedUrl = url;
+            let isShorts = false; 
+
             if (url.includes('youtube.com') || url.includes('youtu.be')) {
                 let videoId = '';
                 if (url.includes('v=')) {
@@ -362,25 +380,35 @@
                     videoId = url.split('youtu.be/')[1].split('?')[0];
                 } else if (url.includes('/shorts/')) {
                     videoId = url.split('/shorts/')[1].split('?')[0];
+                    isShorts = true; 
                 }
                 
                 if (videoId) {
-                    embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1`;
+                    embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&mute=1&rel=0&modestbranding=1`;
                 }
+            } else if (url.includes('instagram.com') && !url.includes('/embed')) {
+                embedUrl = url.endsWith('/') ? `${url}embed` : `${url}/embed`;
             }
             
+            if (isShorts) {
+                container.classList.remove('aspect-video');
+                container.classList.add('aspect-[9/16]');
+                container.style.maxHeight = '75vh'; 
+            } else {
+                container.classList.add('aspect-video');
+                container.classList.remove('aspect-[9/16]');
+                container.style.maxHeight = ''; 
+            }
+
             iframe.src = embedUrl;
-            extLink.href = url;
-            
             modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+            document.body.style.overflow = 'hidden'; 
         }
 
         function closePlayer() {
             const modal = document.getElementById('player-modal');
             const iframe = document.getElementById('player-iframe');
             
-            // iframe src를 비워서 영상 재생 중지
             iframe.src = '';
             
             modal.classList.add('hidden');
@@ -497,7 +525,6 @@
             
             btn.disabled = true; 
             
-            // 로딩 모달 열기
             openModal('loading-modal');
             
             const payload = {
@@ -517,7 +544,6 @@
                 const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
                 const json = await res.json();
                 
-                // 로딩 모달 닫기
                 closeModal('loading-modal');
 
                 if(json.success) { 
