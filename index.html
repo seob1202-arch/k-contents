@@ -33,7 +33,7 @@
 
     <script>
         // 여기에 본인의 웹 앱 URL을 넣어주세요
-        const API_URL = "https://script.google.com/macros/s/AKfycbyy6qZxBuK3DVpOqn9LCG9056mSSrWhaCv6iAIyZWw7i9lnodjDDYxxEt4kKvmEBwageg/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbzlK9gzNyfgIfyp8l3rHv3nnTv0Vi2oYIaB6FgzU5oQ3UF3CMPo657onBJqJ2ur75zXxQ/exec"; 
     </script>
 
     <nav class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 transition-all duration-300">
@@ -45,7 +45,7 @@
                 <h1 class="font-extrabold text-lg tracking-tight text-slate-800">거긴 어떠니?</h1>
             </div>
             <div class="flex items-center gap-4 text-slate-400">
-                <button onclick="openModal('write-modal')" class="hidden md:flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-black transition text-sm font-bold shadow-sm hover:shadow-md mr-2">
+                <button onclick="openWriteModal()" class="hidden md:flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-black transition text-sm font-bold shadow-sm hover:shadow-md mr-2">
                     <i class="fa-solid fa-pen"></i> 소식 전하기
                 </button>
                 <button onclick="shareApp()" class="hover:text-indigo-600 transition"><i class="fa-solid fa-share-nodes text-lg"></i></button>
@@ -70,7 +70,7 @@
             <i class="fa-regular fa-paper-plane absolute bottom-4 right-4 md:bottom-8 md:right-10 text-5xl md:text-8xl text-white/5 rotate-12 transition-transform group-hover:rotate-6 group-hover:scale-110 duration-500"></i>
         </div>
 
-        <div class="grid grid-cols-3 md:grid-cols-6 gap-2 mb-6">
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-2 mb-4">
             <button onclick="filterData('all')" class="bg-white border border-slate-200 py-2.5 rounded-xl text-xs font-bold text-slate-600 shadow-sm hover:border-indigo-500 hover:text-indigo-600 active:scale-95 transition">👀 전체보기</button>
             <button onclick="filterData('💥 컬처쇼크')" class="bg-white border border-slate-200 py-2.5 rounded-xl text-xs font-bold text-slate-600 shadow-sm hover:border-red-500 hover:text-red-500 active:scale-95 transition">💥 컬처쇼크</button>
             <button onclick="filterData('🍯 현지꿀팁')" class="bg-white border border-slate-200 py-2.5 rounded-xl text-xs font-bold text-slate-600 shadow-sm hover:border-amber-500 hover:text-amber-500 active:scale-95 transition">🍯 현지꿀팁</button>
@@ -78,6 +78,9 @@
             <button onclick="filterData('🛍️ 쇼핑하울')" class="bg-white border border-slate-200 py-2.5 rounded-xl text-xs font-bold text-slate-600 shadow-sm hover:border-purple-500 hover:text-purple-500 active:scale-95 transition">🛍️ 쇼핑하울</button>
             <button onclick="filterData('🔥 현지이슈')" class="bg-white border border-slate-200 py-2.5 rounded-xl text-xs font-bold text-slate-600 shadow-sm hover:border-emerald-500 hover:text-emerald-500 active:scale-95 transition">🔥 현지이슈</button>
         </div>
+
+        <div id="country-filters" class="flex gap-2 overflow-x-auto pb-2 mb-4 hide-scrollbar">
+            </div>
 
         <div class="flex justify-end mb-2 px-1">
              <span class="text-[10px] text-slate-400 font-medium"><i class="fa-solid fa-fire text-red-400"></i> 공감 많은 순으로 정렬됩니다</span>
@@ -92,7 +95,7 @@
     </main>
 
     <div class="fixed bottom-6 right-6 z-30 md:hidden">
-        <button onclick="openModal('write-modal')" class="group flex items-center gap-2 bg-slate-900 text-white pl-4 pr-2 py-3 rounded-full shadow-lg shadow-slate-900/30 hover:scale-105 transition-all">
+        <button onclick="openWriteModal()" class="group flex items-center gap-2 bg-slate-900 text-white pl-4 pr-2 py-3 rounded-full shadow-lg shadow-slate-900/30 hover:scale-105 transition-all">
             <span class="font-bold text-sm">소식 전하기</span>
             <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white">
                 <i class="fa-solid fa-pen"></i>
@@ -104,12 +107,15 @@
         <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" onclick="closeModal('write-modal')"></div>
         <div class="absolute bottom-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto bg-white w-full max-w-lg md:max-w-2xl md:rounded-3xl rounded-t-3xl shadow-2xl overflow-hidden max-h-[95vh] md:max-h-[90vh] flex flex-col md:border md:border-slate-100">
             <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
-                <div><h3 class="text-lg font-black text-slate-800">거긴 어때요?</h3><p class="text-[11px] text-slate-500">생생한 현지 소식이나 에피소드를 들려주세요.</p></div>
+                <div>
+                    <h3 id="write-modal-title" class="text-lg font-black text-slate-800">거긴 어때요?</h3>
+                    <p class="text-[11px] text-slate-500">생생한 현지 소식이나 에피소드를 들려주세요.</p>
+                </div>
                 <button onclick="closeModal('write-modal')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-6 overflow-y-auto custom-scrollbar">
                 <form id="postForm" onsubmit="submitForm(event)" class="space-y-5">
-                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                    <input type="hidden" id="inId" value=""> <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                         <label class="block text-xs font-bold text-slate-500 mb-2">🌏 어디서 일어난 일인가요?</label>
                         <div class="flex flex-col md:flex-row gap-2">
                             <select id="inCountrySelect" onchange="toggleCountryInput()" class="w-full p-3 bg-white rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-bold text-slate-700 transition-all appearance-none cursor-pointer">
@@ -173,6 +179,19 @@
         </div>
     </div>
 
+    <div id="delete-modal" class="fixed inset-0 z-[80] hidden flex items-center justify-center px-4">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeModal('delete-modal')"></div>
+        <div class="relative bg-white w-full max-w-xs rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">게시물 삭제</h3>
+            <p class="text-xs text-slate-500 mb-4">등록 시 입력한 비밀번호를 입력해주세요.</p>
+            <input type="password" id="delete-pw" placeholder="비밀번호" class="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 outline-none text-sm mb-4">
+            <div class="flex gap-2">
+                <button onclick="closeModal('delete-modal')" class="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition">취소</button>
+                <button onclick="confirmDelete()" class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition">삭제</button>
+            </div>
+        </div>
+    </div>
+
     <div id="comment-modal" class="fixed inset-0 z-[70] hidden">
         <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" onclick="closeModal('comment-modal')"></div>
         <div class="absolute bottom-0 bg-white w-full max-w-md md:left-1/2 md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 md:bottom-auto rounded-t-3xl md:rounded-2xl shadow-2xl flex flex-col max-h-[80vh] md:max-h-[70vh]">
@@ -196,15 +215,12 @@
             <button onclick="closePlayer()" class="absolute -top-10 right-0 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center text-white text-lg hover:bg-white/20 transition-colors backdrop-blur-md">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            
             <div id="player-container" class="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl border border-white/10 ring-1 ring-white/5 transition-all duration-300">
                 <iframe id="player-iframe" class="w-full h-full" frameborder="0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" onload="onPlayerLoad()"></iframe>
-                
                 <div id="player-loading" class="absolute inset-0 flex items-center justify-center text-white/30 pointer-events-none">
                     <i class="fa-solid fa-circle-notch fa-spin text-2xl"></i>
                 </div>
             </div>
-
             <div class="mt-6 flex flex-col items-center gap-3">
                 <p class="text-white/50 text-[10px] text-center">
                     일부 사이트는 보안상 인앱 재생이 제한될 수 있습니다.<br>
@@ -245,7 +261,7 @@
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
         <div class="relative bg-white rounded-3xl p-8 flex flex-col items-center shadow-2xl animate-in zoom-in duration-300">
             <div class="w-12 h-12 border-4 border-indigo-100 border-t-indigo-500 rounded-full animate-spin mb-4"></div>
-            <h3 class="text-lg font-bold text-slate-800 mb-1">업로드 중...</h3>
+            <h3 class="text-lg font-bold text-slate-800 mb-1">처리 중...</h3>
             <p class="text-xs text-slate-500">잠시만 기다려주세요!</p>
         </div>
     </div>
@@ -256,6 +272,7 @@
         let selectedFileBase64 = null;
         let selectedFileName = null;
         let selectedFileMime = null;
+        let deleteTargetId = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             if(API_URL.includes("여기에")) { 
@@ -263,6 +280,14 @@
                 return; 
             }
             loadData();
+            
+            document.addEventListener('click', function(event) {
+                const isMenuBtn = event.target.closest('.menu-btn');
+                const isMenuDropdown = event.target.closest('.menu-dropdown');
+                if (!isMenuBtn && !isMenuDropdown) {
+                    document.querySelectorAll('.menu-dropdown').forEach(el => el.classList.add('hidden'));
+                }
+            });
         });
 
         async function loadData() {
@@ -278,6 +303,8 @@
                         if(countB !== countA) return countB - countA;
                         return new Date(b.Timestamp) - new Date(a.Timestamp);
                     });
+                    
+                    renderCountryFilters(allData);
                     renderData(allData);
                 }
                 document.getElementById('loading').style.display = 'none';
@@ -285,6 +312,27 @@
                 console.error(e); 
                 showToast("데이터를 불러오지 못했습니다. URL과 권한을 확인해주세요.", false);
                 document.getElementById('loading').innerHTML = `<span class="text-red-400 text-xs">서버 연결 실패</span>`;
+            }
+        }
+
+        function renderCountryFilters(data) {
+            const countries = [...new Set(data.map(d => d.Country))].filter(c => c);
+            const container = document.getElementById('country-filters');
+            
+            let html = `<button onclick="filterCountry('all')" class="shrink-0 px-4 py-2 bg-slate-900 text-white rounded-full text-xs font-bold shadow-md">🌍 전체</button>`;
+            
+            countries.forEach(country => {
+                html += `<button onclick="filterCountry('${country}')" class="shrink-0 px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-full text-xs font-bold hover:border-indigo-500 hover:text-indigo-600 transition shadow-sm">${country}</button>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function filterCountry(country) {
+            if(country === 'all') renderData(allData);
+            else {
+                const filtered = allData.filter(d => d.Country === country);
+                renderData(filtered);
             }
         }
 
@@ -353,14 +401,102 @@
                             </button>
                             ${snsAction}
                         </div>
-                        <div class="mt-3 flex justify-end"><span class="text-[10px] text-slate-300">Editor. ${item.Nickname}</span></div>
+                        <div class="mt-3 flex justify-between items-center border-t border-slate-50 pt-2">
+                            <div class="relative">
+                                <button onclick="toggleMenu('${item.ID}')" class="menu-btn text-slate-300 hover:text-slate-500 transition px-2 py-1"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                <div id="menu-${item.ID}" class="menu-dropdown hidden absolute left-0 bottom-full mb-1 w-20 bg-white rounded-lg shadow-xl border border-slate-100 flex-col text-xs z-20 overflow-hidden">
+                                    <button onclick="editItem('${item.ID}')" class="p-2 hover:bg-slate-50 text-left font-bold text-slate-600 w-full">수정</button>
+                                    <button onclick="deleteItem('${item.ID}')" class="p-2 hover:bg-red-50 text-left font-bold text-red-500 w-full">삭제</button>
+                                </div>
+                            </div>
+                            <span class="text-[10px] text-slate-300">Editor. ${item.Nickname}</span>
+                        </div>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // [최종 수정] 릴스/틱톡 호환성 및 터치 문제 해결
+        function toggleMenu(id) {
+            const menu = document.getElementById(`menu-${id}`);
+            document.querySelectorAll('.menu-dropdown').forEach(el => {
+                if(el !== menu) el.classList.add('hidden');
+            });
+            menu.classList.toggle('hidden');
+        }
+
+        function deleteItem(id) {
+            deleteTargetId = id;
+            openModal('delete-modal');
+        }
+
+        async function confirmDelete() {
+            const pw = document.getElementById('delete-pw').value;
+            if(!pw) { showToast("비밀번호를 입력해주세요.", false); return; }
+            
+            closeModal('delete-modal');
+            openModal('loading-modal');
+
+            try {
+                const res = await fetch(API_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify({ action: 'delete', id: deleteTargetId, password: btoa(pw) }) 
+                });
+                const json = await res.json();
+                
+                closeModal('loading-modal');
+                if(json.success) {
+                    showToast("삭제되었습니다.");
+                    document.getElementById('delete-pw').value = '';
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast("삭제 실패: 비밀번호가 일치하지 않거나 오류가 발생했습니다.", false);
+                }
+            } catch(e) {
+                closeModal('loading-modal');
+                showToast("통신 오류 발생", false);
+            }
+        }
+
+        function editItem(id) {
+            const item = allData.find(d => String(d.ID) === String(id));
+            if(!item) return;
+
+            document.getElementById('write-modal-title').innerText = "게시물 수정";
+            document.getElementById('inId').value = id;
+            document.getElementById('inCity').value = item.City;
+            document.getElementById('inCategory').value = item.Category;
+            document.getElementById('inTitle').value = item.Title;
+            document.getElementById('inContent').value = item.Content;
+            document.getElementById('inLink').value = item.SNSLink;
+            document.getElementById('inNick').value = item.Nickname;
+            document.getElementById('btnSubmit').innerText = "수정하기";
+            
+            const countrySelect = document.getElementById('inCountrySelect');
+            const countryDirect = document.getElementById('inCountryDirect');
+            const options = Array.from(countrySelect.options).map(o => o.value);
+            
+            if(options.includes(item.Country)) {
+                countrySelect.value = item.Country;
+                countryDirect.classList.add('hidden');
+            } else {
+                countrySelect.value = 'direct';
+                countryDirect.value = item.Country;
+                countryDirect.classList.remove('hidden');
+            }
+
+            openModal('write-modal');
+        }
+
+        function openWriteModal() {
+            document.getElementById('postForm').reset();
+            document.getElementById('write-modal-title').innerText = "거긴 어때요?";
+            document.getElementById('inId').value = "";
+            document.getElementById('btnSubmit').innerText = "업로드 하기";
+            removeImage();
+            openModal('write-modal');
+        }
+
         function openPlayer(url) {
             const modal = document.getElementById('player-modal');
             const iframe = document.getElementById('player-iframe');
@@ -368,18 +504,15 @@
             const extLink = document.getElementById('player-external-link');
             const loading = document.getElementById('player-loading');
             
-            // 초기화
             loading.style.display = 'flex';
             extLink.href = url;
             
             let embedUrl = url;
             let isVertical = false; 
 
-            // URL 정제
             let cleanUrl = url.split('?')[0];
             if (cleanUrl.endsWith('/')) cleanUrl = cleanUrl.slice(0, -1);
 
-            // --- 플랫폼별 로직 ---
             if (url.includes('youtube.com') || url.includes('youtu.be')) {
                 let videoId = '';
                 if (url.includes('v=')) {
@@ -402,7 +535,6 @@
                 isVertical = true; 
                 const match = url.match(/video\/(\d+)/);
                 if (match && match[1]) {
-                    // 틱톡은 모바일 웹 자동재생 제한이 심함 (mute로 시도)
                     embedUrl = `https://www.tiktok.com/player/v1/${match[1]}?autoplay=1&mute=1`; 
                 }
             }
@@ -410,7 +542,6 @@
                 embedUrl = `${cleanUrl}/embed`;
             }
             
-            // 비율 조정
             if (isVertical) {
                 container.classList.remove('aspect-video'); 
                 container.classList.add('aspect-[9/16]');   
@@ -426,7 +557,6 @@
             document.body.style.overflow = 'hidden'; 
         }
 
-        // iframe 로드 완료 시 로딩 아이콘 숨김
         function onPlayerLoad() {
             document.getElementById('player-loading').style.display = 'none';
         }
@@ -434,9 +564,7 @@
         function closePlayer() {
             const modal = document.getElementById('player-modal');
             const iframe = document.getElementById('player-iframe');
-            
             iframe.src = '';
-            
             modal.classList.add('hidden');
             document.body.style.overflow = '';
         }
@@ -545,16 +673,16 @@
         async function submitForm(e) {
             e.preventDefault();
             const btn = document.getElementById('btnSubmit');
-            const originalHTML = btn.innerHTML;
+            const isEdit = document.getElementById('inId').value !== ""; 
+            
             let country = document.getElementById('inCountrySelect').value;
             if(country === 'direct') country = document.getElementById('inCountryDirect').value;
             
             btn.disabled = true; 
-            
             openModal('loading-modal');
             
+            // 공통 페이로드
             const payload = {
-                action: 'save',
                 country: country,
                 city: document.getElementById('inCity').value,
                 category: document.getElementById('inCategory').value,
@@ -566,21 +694,30 @@
                 image: selectedFileBase64, imageName: selectedFileName, mimeType: selectedFileMime
             };
 
+            // 수정 모드이면 action='edit', 아니면 'save'
+            if(isEdit) {
+                payload.action = 'edit';
+                payload.id = document.getElementById('inId').value;
+            } else {
+                payload.action = 'save';
+            }
+
             try {
+                // 이제 백엔드가 edit을 지원하므로 직접 요청
                 const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
                 const json = await res.json();
                 
                 closeModal('loading-modal');
 
                 if(json.success) { 
-                    showToast("업로드 완료! 소중한 공유 감사합니다 🎉"); 
+                    showToast(isEdit ? "수정 완료되었습니다!" : "업로드 완료! 소중한 공유 감사합니다 🎉"); 
                     setTimeout(() => location.reload(), 1500); 
                 } else {
                     showToast("실패: " + json.message, false);
                 }
             } catch(e) { 
                 closeModal('loading-modal');
-                showToast("오류: " + e, false); 
+                showToast("오류: " + e.message, false); 
             } finally { 
                 btn.disabled = false; 
             }
